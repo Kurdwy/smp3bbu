@@ -1,263 +1,159 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="<?= base_url('assets/images/logo-polisi.png'); ?>" type="image/png">
-    <title><?= isset($title) ? $title : 'Absensi Polsek Sukarame'; ?></title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+
+    <title><?= isset($title) ? $title : 'UPT SMPN 3 BLAMBANGAN UMPU'; ?></title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            margin: 0;
+            background-color: #f5f5f5;
+            overflow-x: hidden;
         }
 
-        /* Sidebar styling */
+        .wrapper {
+            display: flex;
+            flex: 1;
+        }
+
+        /* Sidebar */
         .sidebar {
-            height: 100%;
             width: 250px;
+            background: #f8f9fa;
+            height: 100vh;
             position: fixed;
             left: 0;
-            background: linear-gradient(to bottom, #f0f0f0, #d9d9d9);
-            overflow-x: hidden;
-            transition: width 0.3s ease;
-            z-index: 500;
-            padding-top: 100px;
+            top: 0;
+            transition: transform 0.3s ease-in-out;
+            box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.1);
+            padding-top: 20px;
+            z-index: 1000;
+        }
+
+        .sidebar.hidden {
+            transform: translateX(-100%);
         }
 
         .sidebar a {
-            padding: 10px 15px;
+            padding: 10px;
             text-decoration: none;
             font-size: 18px;
-            color: #333;
             display: block;
-            transition: 0.3s;
+            color: #333;
         }
 
         .sidebar a:hover {
-            background-color: #ddd;
-            color: #000;
+            background: #007bff;
+            color: #fff;
         }
 
         .sidebar-logo {
             text-align: center;
-            padding-top: 20px;
+            padding: 10px;
         }
 
         .sidebar-logo img {
-            margin-top: 20px;
-            width: 200px;
-            opacity: 0.8;
+            width: 150px;
+            border-radius: 50%;
         }
 
-        .sidebar-logo img:hover {
-            opacity: 1;
-        }
-
-        /* Main content styling */
-        .main-content {
-            margin-left: 150px;
-            padding: 20px;
-            transition: margin-left 0.3s ease;
-        }
-
-        .sidebar-hidden {
-            width: 0;
-        }
-
-        .container {
-            flex: 1;
-        }
-
-        /* Header styling */
-        header {
+        /* Navbar */
+        .navbar {
+            width: 100%;
             background-color: gold;
             color: black;
             padding: 15px;
             text-align: center;
-            position: sticky;
+            position: fixed;
             top: 0;
-            z-index: 1000;
+            left: 0;
+            z-index: 1050;
             box-shadow: 0 4px 2px -2px gray;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            transition: left 0.3s ease-in-out;
         }
 
-        .header-btn {
-            font-size: 24px;
-            cursor: pointer;
-            color: #333;
+        .content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 20px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
         }
 
+        .sidebar.hidden+.content {
+            margin-left: 0;
+            width: 100%;
+        }
+
+        /* Footer */
         footer {
             background-color: gold;
             color: black;
-            padding: 15px;
+            padding: 10px;
             text-align: center;
             width: 100%;
-            position: relative;
+            position: absolute;
             bottom: 0;
-            box-shadow: 0 -4px 2px -2px gray;
-            margin-top: auto;
-        }
-
-        /* Transisi smooth untuk hamburger */
-        .header-btn {
-            transition: margin-left 0.3s ease;
-        }
-
-        .card-container {
-            margin-left: 20px;
-            /* Tambahkan jarak kiri agar tidak menempel */
-        }
-
-        #calendar {
-            max-width: 100%;
-            max-height: 400px;
-            /* Atur tinggi maksimal sesuai kebutuhan */
-            overflow-y: auto;
-            /* Jika konten melebihi batas, tampilkan scroll */
-        }
-
-        /* Mengurangi margin dan padding untuk kalender */
-        #calendar {
-            margin-top: 5px;
-            /* Sesuaikan margin atas */
-            padding-bottom: 0;
-            /* Hilangkan padding bawah */
-        }
-
-        #calendar .fc-toolbar {
-            margin-bottom: 5px;
-            /* Kurangi margin bawah toolbar kalender */
-        }
-
-        #calendar .fc-daygrid {
-            margin-bottom: 0;
-            /* Hilangkan margin bawah grid kalender */
-        }
-
-
-        /* Mengatur ukuran teks dalam kalender */
-        #calendar .fc-toolbar-title {
-            font-size: 1.2rem;
-            /* Atur ukuran teks judul bulan */
-        }
-
-        #calendar th,
-        #calendar td {
-            font-size: 0.9rem;
-            /* Atur ukuran teks untuk nama hari dan tanggal */
-        }
-
-        #calendar .fc-button {
-            font-size: 0.8rem;
-            /* Atur ukuran tombol navigasi pada kalender */
-            padding: 5px 10px;
-            /* Sesuaikan padding tombol agar lebih kecil */
-        }
-
-
-        .card-body #calendar {
-            padding: 20px;
-            font-size: 1.2rem;
-        }
-
-        .card {
-            max-width: 400px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .card h3 {
-            font-size: 2.5rem;
-            margin: 0;
-        }
-
-        .card-header {
-            font-size: 1.25rem;
-            font-weight: bold;
-            padding: 10px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        .card-body {
-            padding: 20px;
-            font-size: 2rem;
-        }
-
-        #calendar {
-            margin-top: 20px;
-        }
-
-        /* Tambahkan spacing pada tombol */
-        .table-actions {
-            display: flex;
-            gap: 10px;
-            /* Menambahkan jarak antar tombol */
-        }
-
-        /* Membatasi lebar kolom agar rapi */
-        table th,
-        table td {
-            text-align: center;
-            /* Agar konten di tengah */
-            vertical-align: middle;
-            /* Agar konten sejajar di tengah */
-        }
-
-        /* Optional: Mengatur ukuran tombol agar seragam */
-        button.btn {
-            min-width: 75px;
-            /* Lebar minimal tombol */
+            left: 0;
         }
     </style>
+
 </head>
 
 <body>
-
-    <!-- Header -->
-    <header>
-        <div class="header-btn" onclick="toggleSidebar()">&#9776;</div>
-        <h1>Absensi Polsek Sukarame</h1>
-    </header>
-
-    <!-- Sidebar -->
-    <div id="mySidebar" class="sidebar">
-
-        <?php if (session()->get('role') === 'admin') : ?>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-logo mt-5">
+                <img src="<?= base_url('assets/images/logo.png'); ?>" alt="Logo Sekolah">
+            </div>
             <a href="/admin-dashboard">Dashboard</a>
-            <a href="/users">Manajemen Akun</a>
-            <a href="/rekap-absensi">Lihat Rekap Absensi</a>
-        <?php endif; ?>
+            <a href="/users">Manajemen Guru</a>
+            <a href="/facilities">Fasilitas Sekolah</a>
+            <a href="/extracurriculars">Ekstrakurikuler</a>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal" class="text-danger">Logout</a>
+        </div>
 
-        <?php if (session()->get('role') === 'user') : ?>
-            <a href="/user-dashboard">Dashboard</a>
-            <a href="/absen/create">Absen</a>
-            <a href="/profil">Profil</a>
-            <a href="/rekap-absensi/user-rekap">Riwayat Absensi</a>
-        <?php endif; ?>
-        <a href="#" data-bs-toggle="modal" data-bs-target="#logoutModal">Logout</a>
+        <!-- Main Content -->
+        <div class="content">
+            <div class="navbar d-flex align-items-center justify-content-between">
+                <button class="btn btn-outline-dark ms-3" id="toggleSidebar">
+                    ☰
+                </button>
+                <h3 class="text-center flex-grow-1">UPT SMPN 3 BLAMBANGAN UMPU</h3>
+            </div>
 
-        <div class="sidebar-logo">
-            <img src="<?= base_url('assets/images/logo-polisi.png'); ?>" alt="Logo Polisi" width="100">
+            <div style="margin-top: 80px;">
+                <?= $this->renderSection('content') ?>
+            </div>
         </div>
     </div>
 
-    <!-- Modal Konfirmasi Logout -->
+    <!-- Footer -->
+    <footer>
+        <p>Team Kerja Praktik Ilmu Komputer @Universitas Lampung</p>
+    </footer>
+
+    <!-- Modal Logout -->
     <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="logoutModalLabel">Konfirmasi Logout</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title">Konfirmasi Logout</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
                     Apakah Anda ingin logout?
@@ -268,7 +164,34 @@
                 </div>
             </div>
         </div>
-    </div
+    </div>
 
-        <!-- Main content -->
-    <div id="mainContent" class="main-content">
+    <!-- jQuery, DataTables, Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#usersTable').DataTable();
+        });
+
+        // Fungsi untuk toggle sidebar
+        document.getElementById("toggleSidebar").addEventListener("click", function() {
+            let sidebar = document.getElementById("sidebar");
+            let content = document.querySelector(".content");
+
+            sidebar.classList.toggle("hidden");
+            if (sidebar.classList.contains("hidden")) {
+                content.style.marginLeft = "0";
+                content.style.width = "100%";
+            } else {
+                content.style.marginLeft = "250px";
+                content.style.width = "calc(100% - 250px)";
+            }
+        });
+    </script>
+
+</body>
+
+</html>

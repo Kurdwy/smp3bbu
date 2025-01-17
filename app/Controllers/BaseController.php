@@ -35,7 +35,15 @@ abstract class BaseController extends Controller
      *
      * @var list<string>
      */
-    protected $helpers = [];
+    public function __construct()
+    {
+        parent::__construct();
+
+        // Pastikan helper dimuat secara global
+        helper(['form', 'url', 'sweetalert_helper']);
+    }
+
+
 
     /**
      * Be sure to declare properties for any property fetch you initialized.
